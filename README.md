@@ -32,7 +32,7 @@ The initial version of this library was completed within two weeks and still nee
 
 Since this library is very simple, the most efficient way to learn is through examples. I have provided two simple examples that almost cover all important APIs of this library.
 
-- [examples/echo](): an echo server with timeout.
-- [examples/chatroom](): a very simple real-time chatroom.
+- [examples/echo](https://github.com/yxlau-sleepy/noevent/tree/main/examples/echo): an echo server with timeout.
+- [examples/chatroom](https://github.com/yxlau-sleepy/noevent/tree/main/examples/chatroom): a very simple real-time chatroom.
 
 Besides, I think it is quite meaningful to understand the design concept of the library. Also, there are a few points that is prone to error and needs to be clarified.
