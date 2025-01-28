@@ -34,15 +34,15 @@ void KQueue::Add(int fd)
         if (kevent(sys_evop_fd_, &kev, 1, NULL, 0, NULL)) {
             throw std::runtime_error("[noevent] - failed to add event(w).");
         }
+        registered_event_count_++;
     }
     if (current_ev->read_cb_ != nullptr) {
         kev.filter = EVFILT_READ;
         if (kevent(sys_evop_fd_, &kev, 1, NULL, 0, NULL)) {
             throw std::runtime_error("[noevent] - failed to add event(r).");
         }
+        registered_event_count_++;
     }
-
-    registered_event_count_++;
 }
 
 void KQueue::Del(int fd)
@@ -54,17 +54,17 @@ void KQueue::Del(int fd)
     if (current_ev->write_cb_ != nullptr) {
         kev.filter = EVFILT_WRITE;
         if (kevent(sys_evop_fd_, &kev, 1, NULL, 0, NULL)) {
-            // throw std::runtime_error("[noevent] - failed to delete event(w).");
+            throw std::runtime_error("[noevent] - failed to delete event(w).");
         }
+        registered_event_count_--;
     }
     if (current_ev->read_cb_ != nullptr) {
         kev.filter = EVFILT_READ;
         if (kevent(sys_evop_fd_, &kev, 1, NULL, 0, NULL)) {
-            // throw std::runtime_error("[noevent] - failed to delete event(r).");
+            throw std::runtime_error("[noevent] - failed to delete event(r).");
         }
+        registered_event_count_--;
     }
-
-    registered_event_count_--;
 }
 
 void KQueue::Poll(std::chrono::seconds waitting_time)
@@ -80,7 +80,6 @@ void KQueue::Poll(std::chrono::seconds waitting_time)
 
     for (int i = 0; i < nactive; ++i) {
         auto current_ev = EV_HUB.events.at(active_kevs[i].ident);
-
         switch (active_kevs[i].filter)
         {
             case EVFILT_READ:
@@ -90,6 +89,7 @@ void KQueue::Poll(std::chrono::seconds waitting_time)
                 current_ev->result_.set((int)Event::Type::kWrite, true);
                 break;
             default:
+                throw std::runtime_error("[noevent] - unknown event type.");
                 break;
         }
         if (!EV_HUB.IsInActive(current_ev->fd_)) {
