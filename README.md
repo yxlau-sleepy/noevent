@@ -22,11 +22,11 @@ cmake .. -DCOMPILE_EXAMPLES=OFF -DBUILD_SHARED_LIBS=ON
 
 The initial version of this library was completed within two weeks and still needs improvement. The following are the future to-do items.
 
-- [ ] Optimization of removing any element from the timeout min-heap
-- [ ] The implementation of Epoll (Linux) and Select (Windows)
-- [ ] More examples
-- [ ] Documentation about this library
-- [ ] Add more useful features and utils (e.g. read/write buffer)
+- [ ] 🔴 Optimization of removing any element from the timeout min-heap
+- [ ] 🔴 The implementation of Epoll (Linux) and Select (Windows)
+- [ ] 🟢 More examples
+- [ ] 🟠 Documentation about this library
+- [ ] 🟡 Add more useful features and utils (e.g. read/write buffer)
 
 ## 📄 Usage
 
