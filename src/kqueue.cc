@@ -25,7 +25,7 @@ KQueue::KQueue() : SystemEventOperation()
 
 void KQueue::Add(int fd)
 {
-    auto current_ev = EV_HUB.events.at(fd);
+    const auto& current_ev = EV_HUB.events.at(fd);
     struct kevent kev;
     EV_SET(&kev, current_ev->fd_, 0, EV_ADD|EV_CLEAR, 0, 0, NULL);
 
@@ -47,7 +47,7 @@ void KQueue::Add(int fd)
 
 void KQueue::Del(int fd)
 {
-    auto current_ev = EV_HUB.events.at(fd);
+    const auto& current_ev = EV_HUB.events.at(fd);
     struct kevent kev;
     EV_SET(&kev, current_ev->fd_, 0, EV_DELETE, 0, 0, NULL);
 
@@ -79,7 +79,7 @@ void KQueue::Poll(std::chrono::seconds waitting_time)
     }
 
     for (int i = 0; i < nactive; ++i) {
-        auto current_ev = EV_HUB.events.at(active_kevs[i].ident);
+        const auto& current_ev = EV_HUB.events.at(active_kevs[i].ident);
         switch (active_kevs[i].filter)
         {
             case EVFILT_READ:

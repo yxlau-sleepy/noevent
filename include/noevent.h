@@ -29,7 +29,7 @@ public:
     Singleton& operator=(const Singleton&) = delete;
     Singleton& operator=(Singleton&&) = delete;
 
-    ~Singleton() = default;
+    virtual ~Singleton() = default;
 
 protected:
     Singleton() = default;
@@ -200,8 +200,6 @@ private:
     friend class internal::Select;
 #endif
 
-    using EventPtr = std::shared_ptr<Event>;
-
     EventHub();
 
     void PreprocessReadyEvents();
@@ -216,7 +214,7 @@ private:
     void ActivePush(int fd);
     int ActiveFrontAndPop();
 
-    std::unordered_map<int, EventPtr> events;
+    std::unordered_map<int, std::shared_ptr<Event>> events;
     int current_fd_ { -1 };
     std::queue<int> ready_fds_;
     utils::EventMinHeap timeout_heap_;

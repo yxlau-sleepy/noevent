@@ -67,7 +67,7 @@ EventHub& EventHub::CreateEmpty(int fd, Event::Callback error_cb)
     if (events.contains(fd)) {
         throw std::logic_error("[noevent] - file descriptor already exists.");
     }
-    EventPtr event_ptr = std::make_shared<Event>(fd);
+    auto event_ptr = std::make_shared<Event>(fd);
     if (event_ptr == nullptr) {
         throw std::runtime_error("[noevent] - failed to create empty state.");
     }
@@ -157,7 +157,7 @@ bool EventHub::IsInActive(int fd) const
 
 void EventHub::Ready(std::optional<std::chrono::seconds> timeout_period)
 {
-    auto current_ev = events.at(current_fd_);
+    const auto& current_ev = events.at(current_fd_);
 
     if (current_ev->read_cb_ != nullptr || current_ev->write_cb_ != nullptr) {
         if (!IsInReady(current_ev->fd_)) {
@@ -184,7 +184,7 @@ void EventHub::Ready(std::optional<std::chrono::seconds> timeout_period)
 
 void EventHub::Destroy()
 {
-    auto current_ev = events.at(current_fd_);
+    auto& current_ev = events.at(current_fd_);
 
     if (IsInReady(current_ev->fd_) || IsInTimeout(current_ev->fd_)) {
         throw std::logic_error("[noevent] - event in ready or timeout cannot be destroyed.");
@@ -196,7 +196,6 @@ void EventHub::Destroy()
         current_ev->fd_, events.size());
 #endif
     current_ev.reset();
-    current_fd_ = -1;
 }
 
 void EventHub::LoopOnce(bool can_block)
@@ -238,7 +237,7 @@ EventHub::EventHub() :
 void EventHub::PreprocessReadyEvents()
 {
     while (!ready_fds_.empty()) {
-        auto current_ev = events.at(ReadyFrontAndPop());
+        const auto& current_ev = events.at(ReadyFrontAndPop());
 
         if (current_ev->write_cb_ == nullptr && current_ev->read_cb_ == nullptr) {
             // Users can cancel the event before dispatch by clearing it's read/write callback(s).
@@ -280,7 +279,7 @@ std::chrono::seconds EventHub::CalculateWaittingTime()
     if (timeout_heap_.Empty()) {
         return 0s;
     }
-    auto current_ev = events.at(timeout_heap_.Top());
+    const auto& current_ev = events.at(timeout_heap_.Top());
     auto now = std::chrono::system_clock::now();
     if (current_ev->timeout_stamp_ <= now) {
         return 0s;
@@ -293,7 +292,7 @@ void EventHub::CheckTimeoutEvents()
 {
     auto now = std::chrono::system_clock::now();
     while (!timeout_heap_.Empty()) {
-        auto current_ev = events.at(timeout_heap_.Top());
+        const auto& current_ev = events.at(timeout_heap_.Top());
         if (current_ev->timeout_stamp_ > now) {
             break;
         }
@@ -329,7 +328,7 @@ void EventHub::CheckTimeoutEvents()
 void EventHub::ResponseActiveEvents()
 {
     while (!active_fds_.empty()) {
-        auto current_ev = events.at(ActiveFrontAndPop());
+        const auto& current_ev = events.at(ActiveFrontAndPop());
 
         if (current_ev->write_cb_ != nullptr || current_ev->read_cb_ != nullptr) {
             sys_ev_op_->Del(current_ev->fd_);
@@ -344,15 +343,27 @@ void EventHub::ResponseActiveEvents()
         current_ev->is_locked = false;
         if (wr_callback != nullptr && current_ev->result_.test((int)Event::Type::kWrite)) {
             wr_callback(current_ev->fd_, Event::Type::kWrite, current_ev->data_);
+            if (current_ev == nullptr) {
+                return;
+            }
         }
         if (rd_callbcak != nullptr && current_ev->result_.test((int)Event::Type::kRead)) {
             rd_callbcak(current_ev->fd_, Event::Type::kRead, current_ev->data_);
+            if (current_ev == nullptr) {
+                return;
+            }
         }
         if (current_ev->result_.test((int)Event::Type::kError)) {
             current_ev->error_cb_(current_ev->fd_, Event::Type::kError, current_ev->data_);
+            if (current_ev == nullptr) {
+                return;
+            }
         }
         if (current_ev->result_.test((int)Event::Type::kTimeout)) {
             current_ev->error_cb_(current_ev->fd_, Event::Type::kTimeout, current_ev->data_);
+            if (current_ev == nullptr) {
+                return;
+            }
         }
         current_ev->result_.reset();
 #ifdef DEBUG
