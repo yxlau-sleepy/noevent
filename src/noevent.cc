@@ -330,7 +330,8 @@ void EventHub::ResponseActiveEvents()
     while (!active_fds_.empty()) {
         const auto& current_ev = events.at(ActiveFrontAndPop());
 
-        if (current_ev->write_cb_ != nullptr || current_ev->read_cb_ != nullptr) {
+        if (current_ev->result_.test((int)Event::Type::kWrite) ||
+            current_ev->result_.test((int)Event::Type::kRead)) {
             sys_ev_op_->Del(current_ev->fd_);
         }
         Event::Callback wr_callback = current_ev->write_cb_;
