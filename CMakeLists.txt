@@ -11,7 +11,6 @@ target_sources(noevent
     PRIVATE src/noevent.cc
     PRIVATE src/epoll.cc
     PRIVATE src/kqueue.cc
-    PRIVATE src/select.cc
 )
 target_include_directories(noevent
     PUBLIC include
