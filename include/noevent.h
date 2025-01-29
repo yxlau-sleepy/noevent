@@ -74,7 +74,17 @@ protected:
 #ifdef __linux__
 class Epoll final: public SystemEventOperation
 {
-    /// \todo implementations.
+public:
+    Epoll();
+
+    virtual ~Epoll() = default;
+
+    virtual void Add(int fd) override;
+    virtual void Del(int fd) override;
+    virtual void Poll(std::chrono::seconds waitting_time) override;
+
+private:
+    int registered_event_count_ { 0 };
 };
 #endif
 
