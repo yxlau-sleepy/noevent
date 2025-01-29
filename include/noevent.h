@@ -72,7 +72,7 @@ protected:
 };
 
 #ifdef __linux__
-class Epoll: public SystemEventOperation
+class Epoll final: public SystemEventOperation
 {
     /// \todo implementations.
 };
@@ -95,18 +95,11 @@ private:
 };
 #endif
 
-#ifdef _WIN32
-class Select final : public SystemEventOperation
-{
-    /// \todo: implementations.
-};
-#endif
-
 }  // namespace noevent::internal
 
 
 class EventHub;
-class Event
+class Event final
 {
 public:
     friend class EventHub;
@@ -128,8 +121,6 @@ private:
     friend class internal::Epoll;
 #elif defined(__APPLE__)
     friend class internal::KQueue;
-#elif defined(_WIN32)
-    friend class internal::Select;
 #endif
 
     bool is_locked { false };
@@ -153,7 +144,7 @@ private:
 };
 
 
-class EventHub : public utils::Singleton
+class EventHub final : public utils::Singleton
 {
 public:
     static EventHub& Instance();
@@ -184,8 +175,6 @@ private:
     friend class internal::Epoll;
 #elif defined(__APPLE__)
     friend class internal::KQueue;
-#elif defined(_WIN32)
-    friend class internal::Select;
 #endif
 
     EventHub();
