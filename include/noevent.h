@@ -74,11 +74,7 @@ protected:
 #ifdef __linux__
 class Epoll: public SystemEventOperation
 {
-public:
-    /**
-     * \TODO: IMPLEMENTATIONS.
-     */
-private:
+    /// \todo implementations.
 };
 #endif
 
@@ -102,11 +98,7 @@ private:
 #ifdef _WIN32
 class Select final : public SystemEventOperation
 {
-public:
-    /**
-     * \TODO: IMPLEMENTATIONS.
-     */
-private:
+    /// \todo: implementations.
 };
 #endif
 
@@ -134,11 +126,9 @@ private:
     friend class utils::EventMinHeap;
 #ifdef __linux__
     friend class internal::Epoll;
-#endif
-#ifdef __APPLE__
+#elif defined(__APPLE__)
     friend class internal::KQueue;
-#endif
-#ifdef _WIN32
+#elif defined(_WIN32)
     friend class internal::Select;
 #endif
 
@@ -192,11 +182,9 @@ private:
     friend class utils::EventMinHeap;
 #ifdef __linux__
     friend class internal::Epoll;
-#endif
-#ifdef __APPLE__
+#elif defined(__APPLE__)
     friend class internal::KQueue;
-#endif
-#ifdef _WIN32
+#elif defined(_WIN32)
     friend class internal::Select;
 #endif
 

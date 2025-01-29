@@ -5,7 +5,6 @@
 
 #ifdef __APPLE__
 #include <sys/event.h>
-#include <string.h>
 #endif
 
 
