@@ -8,6 +8,9 @@
 
 #include <sys/socket.h>
 #include <sys/types.h>
+#ifdef __linux__
+#include <string.h>
+#endif
 #include <arpa/inet.h>
 
 #include <noevent.h>

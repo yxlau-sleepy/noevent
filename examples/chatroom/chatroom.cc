@@ -8,7 +8,9 @@
 
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <fcntl.h>
+#ifdef __linux__
+#include <string.h>
+#endif
 #include <arpa/inet.h>
 
 #include <noevent.h>
@@ -115,9 +117,6 @@ void UserWriteCallback(int fd, Event::Type type, std::shared_ptr<void> data)
     }
 
     auto msg_count = user_data->msg_queue_.size();
-    if (msg_count != 0) {
-        std::cout << msg_count << std::endl;
-    }
     std::stringstream ss;
     while (!user_data->msg_queue_.empty()) {
         ss << *(user_data->msg_queue_.front());
