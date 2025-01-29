@@ -23,7 +23,7 @@ cmake .. -DCOMPILE_EXAMPLES=OFF -DBUILD_SHARED_LIBS=ON
 The initial version of this library was completed within two weeks and still needs improvement. The following are the future to-do items.
 
 - [ ] 🔴 Rewrite the timeout min-heap with a hash table
-- [ ] 🔴 The implementation of Epoll (Linux)
+- [X] ✅ ~~The implementation of Epoll (Linux)~~
 - [ ] 🟢 More examples
 - [ ] 🟠 Documentation about this library
 - [ ] 🟡 Add more useful features and utils (e.g. read/write buffer)
