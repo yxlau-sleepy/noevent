@@ -41,7 +41,10 @@ void EventMinHeap::Remove(int fd)
 {
     if (auto it = std::find(data_.begin(), data_.end(), fd); it != data_.end()) {
         data_.erase(it);
-        std::make_heap(data_.begin(), data_.end());
+        std::make_heap(data_.begin(), data_.end(), [](int lhs, int rhs) -> bool {
+            return EV_HUB.events.at(lhs)->timeout_stamp_ >
+                EV_HUB.events.at(rhs)->timeout_stamp_;
+        });
     }
 }
 
